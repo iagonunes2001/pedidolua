@@ -37,7 +37,7 @@
     @media (max-width: 768px) {
       #buttonContainer {
         position: relative;
-        height: 200px; /* Increased for more movement space */
+        height: 250px; /* Increased for more movement space */
       }
       #yesBtn {
         position: absolute;
@@ -55,7 +55,7 @@
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
-  <div id="proposal" class="p-6 md:p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl max-w-md w-full relative text-center" style="height: 300px;">
+  <div id="proposal" class="p-6 md:p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl max-w-md w-full relative text-center" style="height: 350px;">
     <h1 class="text-4xl md:text-5xl text-pink-700 mb-8">Lua, quer iluminar minha vida pra sempre?</h1>
     <div id="buttonContainer" class="relative h-24 md:h-24">
       <button id="yesBtn" class="absolute left-1/2 -translate-x-1/2 md:left-1/4 md:-translate-x-1/2 px-8 py-4 w-auto text-lg font-bold bg-pink-500 text-white rounded-full hover:bg-pink-600 transition transform hover:scale-110 shadow-lg">Com toda certeza!</button>
@@ -115,16 +115,17 @@
       const noBtnRect = noBtn.getBoundingClientRect();
       const maxX = containerRect.width - noBtnRect.width;
       const maxY = containerRect.height - noBtnRect.height;
-      
+      const minY = window.innerWidth <= 768 ? 80 : 0; // Restrict "Não" to below "Sim" on mobile
+
       // Initialize current position if not set
       if (currentX === null || currentY === null) {
         currentX = parseFloat(noBtn.style.left) || maxX / 2;
-        currentY = parseFloat(noBtn.style.top) || maxY / 2;
+        currentY = parseFloat(noBtn.style.top) || (window.innerWidth <= 768 ? 100 : maxY / 2);
       }
 
       // Generate random direction (angle in radians)
       const angle = Math.random() * 2 * Math.PI;
-      const speed = window.innerWidth <= 768 ? 30 : 50; // Smaller steps on mobile
+      const speed = window.innerWidth <= 768 ? 25 : 40; // Smaller steps on mobile
       const deltaX = Math.cos(angle) * speed;
       const deltaY = Math.sin(angle) * speed;
 
@@ -134,14 +135,14 @@
 
       // Keep within bounds
       newX = Math.max(0, Math.min(newX, maxX));
-      newY = Math.max(0, Math.min(newY, maxY));
+      newY = Math.max(minY, Math.min(newY, maxY));
 
       // Avoid "Com toda certeza" button
       const noBtnCenterX = newX + noBtnRect.width / 2;
       const noBtnCenterY = newY + noBtnRect.height / 2;
       const yesBtnCenterX = yesBtnRect.left - containerRect.left + yesBtnRect.width / 2;
       const yesBtnCenterY = yesBtnRect.top - containerRect.top + yesBtnRect.height / 2;
-      const minDistance = window.innerWidth <= 768 ? 60 : 80;
+      const minDistance = window.innerWidth <= 768 ? 80 : 100; // Stricter on mobile
       const distance = Math.sqrt(
         Math.pow(noBtnCenterX - yesBtnCenterX, 2) + Math.pow(noBtnCenterY - yesBtnCenterY, 2)
       );
